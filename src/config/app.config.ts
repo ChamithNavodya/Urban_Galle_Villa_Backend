@@ -3,4 +3,5 @@ export default () => ({
    logLevels: process.env.LOG_LEVELS,
    logExcludedContexts: process.env.LOG_EXCLUDED_CONTEXTS,
    databaseURL: process.env.DATABASE_URL,
+   appTimezone: process.env.APP_TIMEZONE,
 });
