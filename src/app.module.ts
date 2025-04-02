@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { LoggerModule } from './logger/logger.module';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
+import { CalendarModule } from './calendar/calendar.module';
 import appConfig from './config/app.config';
 import loggerConfig from './logger/logger.config';
 
@@ -23,6 +24,7 @@ import loggerConfig from './logger/logger.config';
       LoggerModule,
       DatabaseModule,
       UserModule,
+      CalendarModule,
    ],
    controllers: [AppController],
    providers: [AppService],
