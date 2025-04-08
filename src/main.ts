@@ -5,6 +5,8 @@ import { CustomLoggerService } from './logger/custom-logger.service';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { ApiResponseInterceptor } from './common/interceptors/api-response.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+// import { SeederService } from './database/seeder/seeder.service';
 
 async function bootstrap() {
    const app = await NestFactory.create(AppModule, {
@@ -20,6 +22,18 @@ async function bootstrap() {
    app.useLogger(logger);
 
    app.setGlobalPrefix('api/v1');
+
+   // Config cores
+   app.enableCors({
+      origin: ['http://localhost:3000'],
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      credentials: true, // If you need to send cookies
+      allowedHeaders: 'Content-Type, Accept, Authorization',
+   });
+
+   // Run seeder only in development/staging
+   // const seeder = app.get(SeederService);
+   // await seeder.seed();
 
    // Register global Validation Pipeline
    app.useGlobalPipes(
@@ -44,6 +58,7 @@ async function bootstrap() {
 
    // Register global interceptor
    app.useGlobalInterceptors(new ApiResponseInterceptor());
+   app.useGlobalInterceptors(new LoggingInterceptor(configService));
    // Register global exception filter
    app.useGlobalFilters(new HttpExceptionFilter());
 

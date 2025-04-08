@@ -4,11 +4,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerModule } from './logger/logger.module';
 import { DatabaseModule } from './database/database.module';
-import { UserModule } from './user/user.module';
-import { CalendarModule } from './calendar/calendar.module';
-import { RoomModule } from './room/room.module';
+import { UserModule } from './modules/user/user.module';
+import { CalendarModule } from './modules/calendar/calendar.module';
+import { RoomModule } from './modules/room/room.module';
+import { UploadModule } from './modules/upload/upload.module';
+import { SettingsModule } from './modules/settings/settings.module';
 import appConfig from './config/app.config';
 import loggerConfig from './logger/logger.config';
+import { SeederModule } from './database/seeder/seeder.module';
+import { RatePlanModule } from './modules/rate-plan/rate-plan.module';
 
 @Module({
    imports: [
@@ -21,6 +25,10 @@ import loggerConfig from './logger/logger.config';
       UserModule,
       CalendarModule,
       RoomModule,
+      UploadModule,
+      SettingsModule,
+      SeederModule,
+      RatePlanModule,
    ],
    controllers: [AppController],
    providers: [AppService],

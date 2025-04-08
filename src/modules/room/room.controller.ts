@@ -4,6 +4,7 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { Room } from './entities/room.entity';
 import { CustomLoggerService } from 'src/logger/custom-logger.service';
 import { GetRoomByIdDto } from './dto/get-room-by-id.dto';
+import { UpdateRoomDto } from './dto/update-room.dto';
 
 @Controller('room')
 export class RoomController {
@@ -28,5 +29,26 @@ export class RoomController {
    async getRoomById(@Param() params: GetRoomByIdDto): Promise<Room> {
       const roomId = Number(params.roomId);
       return this.roomService.getRoomById(roomId);
+   }
+
+   @Post('update/:roomId')
+   async updateRoom(
+      @Param('roomId') roomId: number,
+      @Body() updateRoomDto: UpdateRoomDto,
+   ) {
+      return await this.roomService.updateRoom(roomId, updateRoomDto);
+   }
+
+   @Post('delete/:roomId')
+   async deleteRoom(@Param('roomId') roomId: number) {
+      return await this.roomService.deleteRoom(roomId);
+   }
+
+   @Get('list') // This will return only the roomId and room name
+   async getRoomList() {
+      return await this.roomService.getRoomsWithFilters({ isActive: true }, [
+         'roomId',
+         'name',
+      ]);
    }
 }

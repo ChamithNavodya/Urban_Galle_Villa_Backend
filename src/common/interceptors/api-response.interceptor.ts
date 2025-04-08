@@ -29,7 +29,7 @@ export class ApiResponseInterceptor<T>
          map((data) => ({
             success: data?.success || true,
             message: data?.message || message,
-            data: data?.result?.data || data,
+            data: data?.data || data || null,
          })),
       );
    }

@@ -18,3 +18,9 @@ export enum RoomType {
    SUITE = 'suite',
    APARTMENT = 'apartment',
 }
+
+export enum RoomStatus {
+   ACTIVE = 'active',
+   INACTIVE = 'inactive',
+   CLOSED = 'closed',
+}
