@@ -6,6 +6,8 @@ import { CreateRatePlanDto } from './dto/create-rate-plan.dto';
 import { RatePlanResponseDto } from './dto/rate-plan-response.dto';
 import { UpdateRatePlanDto } from './dto/update-rate-plan.dto';
 import { RatePlanStatus } from 'src/enums/rate-plan.enums';
+import { RatePlanQueryDto } from './dto/rate-plan-query.dto';
+import { PaginatedResponse } from 'src/common/interfaces/paginated-response.interface';
 
 @Injectable()
 export class RatePlanService {
@@ -29,13 +31,63 @@ export class RatePlanService {
       return await this.ratePlanRepository.save(newRatePlan);
    }
 
-   async getAllRatePlans(): Promise<RatePlan[]> {
-      return await this.ratePlanRepository
+   async getAllRatePlans(
+      query: RatePlanQueryDto,
+   ): Promise<PaginatedResponse<RatePlan>> {
+      const {
+         page = 1,
+         limit = 10,
+         ratePlanType,
+         ratePlanStatus,
+         roomIds,
+      } = query;
+      const skip = (page - 1) * limit;
+
+      const queryBuilder = this.ratePlanRepository
          .createQueryBuilder('ratePlan')
          .leftJoinAndSelect('ratePlan.applicableRooms', 'room')
          .select(['ratePlan', 'room.roomId', 'room.name'])
-         .where('ratePlan.isActive = :isActive', { isActive: true })
-         .getMany();
+         .orderBy('ratePlan.updatedAt', 'DESC') // Sort by updatedAt in descending order
+         .take(limit)
+         .skip(skip);
+
+      // Apply filters
+      if (ratePlanType) {
+         queryBuilder.andWhere('ratePlan.ratePlanType = :ratePlanType', {
+            ratePlanType,
+         });
+      }
+
+      if (ratePlanStatus) {
+         queryBuilder.andWhere('ratePlan.ratePlanStatus = :ratePlanStatus', {
+            ratePlanStatus,
+         });
+      }
+
+      if (roomIds && roomIds.length > 0) {
+         queryBuilder.andWhere('room.roomId IN (:...roomIds)', { roomIds });
+      }
+
+      if (query.search) {
+         const trimmedSearchText = query.search.trim();
+         if (trimmedSearchText) {
+            queryBuilder.andWhere('LOWER(ratePlan.name) LIKE :searchText', {
+               searchText: `%${trimmedSearchText.toLowerCase()}%`,
+            });
+         }
+      }
+
+      const [data, total] = await queryBuilder.getManyAndCount();
+      console.log(total);
+      return {
+         data,
+         meta: {
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit),
+         },
+      };
    }
 
    async getRatePlanById(ratePlanId: number): Promise<RatePlanResponseDto> {

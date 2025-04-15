@@ -30,6 +30,7 @@ export class ApiResponseInterceptor<T>
             success: data?.success || true,
             message: data?.message || message,
             data: data?.data || data || null,
+            meta: data?.meta,
          })),
       );
    }

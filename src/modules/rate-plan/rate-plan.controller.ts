@@ -6,6 +6,8 @@ import { RatePlanResponseDto } from './dto/rate-plan-response.dto';
 import { GetRatePlanByIdDto } from './dto/get-rate-by-id.dto';
 import { UpdateRatePlanDto } from './dto/update-rate-plan.dto';
 import { StatusChangeRatePlanDto } from './dto/change-status.dto';
+import { RatePlanQueryDto } from './dto/rate-plan-query.dto';
+import { PaginatedResponse } from 'src/common/interfaces/paginated-response.interface';
 
 @Controller('rate-plan')
 export class RatePlanController {
@@ -21,9 +23,11 @@ export class RatePlanController {
       return await this.ratePlanService.createRatePlan(createRatePlanDto);
    }
 
-   @Get('all')
-   async getAllRatePlans(): Promise<RatePlanResponseDto[]> {
-      return await this.ratePlanService.getAllRatePlans();
+   @Post('all')
+   async getAllRatePlans(
+      @Body() query: RatePlanQueryDto,
+   ): Promise<PaginatedResponse<RatePlanResponseDto>> {
+      return await this.ratePlanService.getAllRatePlans(query);
    }
 
    @Get('view/:ratePlanId')
